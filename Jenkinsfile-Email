@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                echo "Building the code using Maven, a build automation tool"
+                echo "Building the code using Maven, it is a build automation tool"
             }
         }
 
