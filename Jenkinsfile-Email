@@ -1,0 +1,74 @@
+pipeline {
+    agent any
+    environment {
+        DEV_EMAIL = 'testwork369963@gmail.com'
+    }
+    stages {
+        stage("Build") {
+            steps {
+                echo "Building the code using Maven, a build automation tool"
+            }
+        }
+
+        stage("Unit and Integration Tests") {
+            steps {
+                echo "Running unit tests with JUnit and integration tests with Postman/Newman"
+            }
+            post {
+                always {
+                    emailext(
+                        subject: "Unit & Integration Tests - ${currentBuild.currentResult}",
+                        body: "Unit & Integration Tests stage has completed with status: ${currentBuild.currentResult}. See attached logs.",
+                        to: "${DEV_EMAIL}",
+                        attachLog: true
+                    )
+                }
+            }
+        }
+
+        stage("Code Analysis") {
+            steps {
+                echo "Analyzing code quality using SonarQube"
+            }
+        }
+
+        stage("Security Scan") {
+            steps {
+                echo "Performing security scan using Snyk or OWASP Dependency-Check"
+            }
+            post {
+                always {
+                    emailext(
+                        subject: "Security Scan - ${currentBuild.currentResult}",
+                        body: "Security Scan stage has completed with status: ${currentBuild.currentResult}. See attached logs.",
+                        to: "${DEV_EMAIL}",
+                        attachLog: true
+                    )
+                }
+            }
+        }
+
+        stage("Deploy to Staging") {
+            steps {
+                echo "Deploying application to staging server using AWS EC2"
+            }
+        }
+
+        stage("Integration Tests on Staging") {
+            steps {
+                echo "Running integration tests on staging environment using Selenium"
+            }
+        }
+
+        stage("Deploy to Production") {
+            steps {
+                echo "Deploying application to production server using AWS EC2"
+            }
+        }
+    }
+    post {
+        always {
+            echo "Pipeline finished with status: ${currentBuild.currentResult}"
+        }
+    }
+}
